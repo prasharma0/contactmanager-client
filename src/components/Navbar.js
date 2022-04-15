@@ -1,6 +1,9 @@
 
+import { useContext } from "react";
 import {Link} from "react-router-dom";
+import AuthContext from "../context/AuthContext";
 const Navbar = ({title = "AMS console"}) => {
+  const {user , setUser} = useContext(AuthContext);
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       <div className="container-fluid">
@@ -23,7 +26,13 @@ const Navbar = ({title = "AMS console"}) => {
 
         <div className="collapse navbar-collapse"id="navbarColor01" >
           <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
+              
+              {user? <><li className="nav-item" onClick={()=>{
+              console.log(setUser( null ));
+              localStorage.clear();
+            }}>
+              <button className= "btn btn-danger">Logout</button>
+            </li> </>: <><li className="nav-item" >
               <Link to = "/login" style={{ textDecoration: 'none' }}>
               <a className="nav-link" >
                 Login
@@ -37,7 +46,13 @@ const Navbar = ({title = "AMS console"}) => {
                 Register
               </a>
               </Link>
-            </li>
+            </li></>}
+
+            
+
+            
+
+
           </ul>
         </div>
       </div>

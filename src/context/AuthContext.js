@@ -18,7 +18,9 @@ export const AuthContextProvider = ({children})=>{ //takes children as the prop
               });
                const result = await res.json();
              if(!result.error){
+                //  console.log(result)
                localStorage.setItem("token", result.token);
+               setUser(result.user);
              }else{
                 //  setError(result.error);
                 //  toast.error(error);
@@ -46,6 +48,7 @@ export const AuthContextProvider = ({children})=>{ //takes children as the prop
 
             if(!result.error){
                 console.log(result);
+
             }else{
                 console.log("error",result);
             }
@@ -53,6 +56,6 @@ export const AuthContextProvider = ({children})=>{ //takes children as the prop
             console.log(err)
         }
     }
-    return <AuthContext.Provider value ={{loginUser, registerUser} } ><ToastContainer />{children}</AuthContext.Provider> //returning the props
+    return <AuthContext.Provider value ={{loginUser, registerUser, user, setUser} }><ToastContainer />{children}</AuthContext.Provider> //returning the props
 }
 export default AuthContext;
