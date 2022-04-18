@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
 import { useState } from "react";
 import {Link} from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 import AuthContext from "../context/AuthContext";
+import ToastContext from "../context/ToastContext";
 
 const Login = () => {
+  const {toast}= useContext(ToastContext);
  
   const {loginUser} = useContext(AuthContext)
     const [credentials, setCredentials] = useState({
@@ -21,6 +22,7 @@ const Login = () => {
 
     const handleSubmit =(event)=>{
         event.preventDefault();
+        
         // console.log("data", credentials);
         if( !credentials.email || !credentials.password){
           toast.error("please enter all the required fields!");
@@ -32,7 +34,7 @@ const Login = () => {
     
   return (
     <>
-    <ToastContainer />
+   
       <h3>Login</h3>
 
       <form onSubmit={handleSubmit}>

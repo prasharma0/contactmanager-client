@@ -1,11 +1,49 @@
-import { createContext, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import { createContext, useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+// import { toast, ToastContainer } from "react-toastify";
+// import 'react-toastify/dist/ReactToastify.css';
+import ToastContext from "./ToastContext";
 
 export const AuthContext = createContext();
 export const AuthContextProvider = ({children})=>{ //takes children as the prop
+    const {toast} = useContext(ToastContext);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+
     const [user, setUser] = useState(null);
     const [error, setError]= useState(null);
+ 
+
+    useEffect(()=>{   //we want to execute this only once when the page gets load.
+     checkIfUserLoggedIn();
+    },[])
+
+
+    //check if the user is logged in
+    const checkIfUserLoggedIn = async()=>{
+        try {
+           const res = await fetch(`http://localhost:5000/api/me`,{
+               method: "GET",
+               headers: {
+                   "Authorization":`Bearer ${localStorage.getItem("token")}`,
+               },
+           });
+           const result = await res.json();
+           if(!result.error){
+               setUser(result); //state gets updated until we log out.
+               
+                navigate("/", {replace: true});
+              
+           } else{
+            console.log(result); 
+           }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+
     //loin request
       const loginUser = async(userData)=>{
           try {
@@ -18,13 +56,15 @@ export const AuthContextProvider = ({children})=>{ //takes children as the prop
               });
                const result = await res.json();
              if(!result.error){
-                //  console.log(result)
+        
                localStorage.setItem("token", result.token);
                setUser(result.user);
+               toast.success(`Logged in ${result.user.name}`);
+
+               navigate("/", {replace: true});
              }else{
-                //  setError(result.error);
-                //  toast.error(error);
-                //  setError(null);
+                 toast.error(result.error);
+                 
              }
           } catch (err) {
 
@@ -47,15 +87,16 @@ export const AuthContextProvider = ({children})=>{ //takes children as the prop
           
 
             if(!result.error){
-                console.log(result);
+                toast.success("user registered successfully !")
+                navigate("/login" , {replace :true});
 
             }else{
-                console.log("error",result);
+                toast.error(result.error);
             }
         } catch (err) {
             console.log(err)
         }
     }
-    return <AuthContext.Provider value ={{loginUser, registerUser, user, setUser} }><ToastContainer />{children}</AuthContext.Provider> //returning the props
+    return <AuthContext.Provider value ={{loginUser, registerUser, user, setUser} }>{children}</AuthContext.Provider> //returning the props
 }
 export default AuthContext;

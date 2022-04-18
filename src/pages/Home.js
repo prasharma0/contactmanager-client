@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const Home=()=>{
-    const notify = () => toast("You are in the Home Page!");
-    return (<>
-    This is Home page
-    <button onClick={notify}>Notify!</button>
-    <ToastContainer />
-    
-    </>);
+    const navigate = useNavigate();
+    const {user} = useContext(AuthContext);
+   useEffect(()=>{
+    !user && navigate("/login",{replace:true});
+   },[]);
+   return <>This is Home Page !</>
 };
 export default Home;

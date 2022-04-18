@@ -1,10 +1,11 @@
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 import AuthContext from "../context/AuthContext";
+import ToastContext from "../context/ToastContext";
 
 const Register=()=>{
+  const {toast} = useContext(ToastContext);
   const {registerUser} = useContext(AuthContext);
     const[credentials, setCredentials]= useState({
         name : "",
@@ -38,7 +39,7 @@ const Register=()=>{
 
     return (
         <>
-        <ToastContainer />
+        {/* <ToastContainer /> */}
         <h3>Create your account</h3>
 
 <form onSubmit={handleSubmit}>
