@@ -12,7 +12,7 @@ export const AuthContextProvider = ({children})=>{ //takes children as the prop
 
 
     const [user, setUser] = useState(null);
-    const [error, setError]= useState(null);
+    // const [error, setError]= useState(null);
  
 
     useEffect(()=>{   //we want to execute this only once when the page gets load.
@@ -36,10 +36,10 @@ export const AuthContextProvider = ({children})=>{ //takes children as the prop
                 navigate("/", {replace: true});
               
            } else{
-            console.log(result); 
+            navigate("/login",{replace: true});
            }
         } catch (err) {
-            console.log(err)
+            console.log(err); //catching the error occured from the server;
         }
     }
 
@@ -97,6 +97,15 @@ export const AuthContextProvider = ({children})=>{ //takes children as the prop
             console.log(err)
         }
     }
+       
+    const createContact = async(userData)=>{
+        try {
+        
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return <AuthContext.Provider value ={{loginUser, registerUser, user, setUser} }>{children}</AuthContext.Provider> //returning the props
 }
 export default AuthContext;
