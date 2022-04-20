@@ -31,9 +31,15 @@ export const AuthContextProvider = ({children})=>{ //takes children as the prop
            });
            const result = await res.json();
            if(!result.error){
+
+            if(location.pathname === "/login" || location.pathname ==="/register"){
+                navigate("/", {replace: true});
+            }else{
+                navigate(location.pathname ? location.pathname : "/")
+            }
                setUser(result); //state gets updated until we log out.
                
-                navigate("/", {replace: true});
+               
               
            } else{
             navigate("/login",{replace: true});

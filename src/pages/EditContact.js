@@ -1,10 +1,12 @@
-import React, { createContext, useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { Spinner } from 'react-bootstrap';
+import { useNavigate, useParams } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import ToastContext from '../context/ToastContext';
 
-export const CreateContact = () => {
+export const EditContact = () => {
 
+    const {id} = useParams();
     const navigate = useNavigate();
     const {user} = useContext(AuthContext);
     const {toast} = useContext(ToastContext);
@@ -13,9 +15,10 @@ export const CreateContact = () => {
         name:"",
         address:"",
         email: "",
-        phone: "" ,
+        phone: "",
     });
     
+    const [loading , setLoading] = useState(false);
 
     const handleInputChange = event =>{
         const {name , value} = event.target;
@@ -26,28 +29,61 @@ export const CreateContact = () => {
         event.preventDefault();
        
         const res = await fetch(`http://localhost:5000/api/contact`, {
-            method: "POST",
+            method: "PUT",
            headers:{
                "Content-Type": "application/json",
-               "Authorization": `Bearer ${localStorage.getItem("token")}`,
+               Authorization: `Bearer ${localStorage.getItem("token")}`,
            },
-           body: JSON.stringify(userDetails),
+           body: JSON.stringify({id, ...userDetails}),
         });
          const result = await res.json();
          console.log(result);
          if(!result.error){
-             toast.success(`contact ${userDetails.name} created`)
+             
+             toast.success(`updated contact ${userDetails.name} `);
              setUserDetails({name: "", address:"", email:"", phone:""});
+             navigate("/mycontacts");
            
          }else{
          
              toast.error(result.error);
          }
     }
+    useEffect(() => {
+        setLoading(true);
+        (async()=>{
+            
+            try {
+             const res = await fetch(`http://localhost:5000/api/contact/${id}`,{
+                 method: "GET",
+                 headers:{
+                     
+                     "Authorization" : `Bearer ${localStorage.getItem("token")}`,
+
+                 },
+                
+             });
+
+             const result = await res.json();
+             setUserDetails({name: result.name , email : result.email , address:result.address, phone: result.phone});
+             setLoading(false);
+            } catch (err) {
+               console.log(err); 
+            }
+
+
+
+        })();
+      
+    }, [])
+    
 
   return (
     <div>
-        <h2> Create your contact here</h2>
+        {loading?  <Spinner splash = "Loading Contact..." />:(
+        <>
+        
+        <h2> Edit your contact here</h2>
         <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="nameInput" className="form-label mt-4">
@@ -114,14 +150,17 @@ export const CreateContact = () => {
             required
           />
         </div>
-        <input type="submit" value="add contact" className="btn btn-info my-3" />
+        <input type="submit" value="Save Changes" className="btn btn-info my-3" />
 
         
         
 
 
         </form>
+        
+        </>)}
+       
     </div>
   )
 }
-export default CreateContact;
+export default EditContact;
